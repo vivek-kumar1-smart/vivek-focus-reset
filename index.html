@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#101827">
+<title>Vivek's Focus Reset | 30-Day Tracker</title>
+<style>
+:root{--bg:#0b1220;--panel:#121d2e;--panel2:#18263a;--line:#2a3a50;--text:#edf3fb;--muted:#9fb0c5;--green:#55d6a0;--blue:#77b7ff;--amber:#f5c56b;--red:#ff8d8d}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top right,#1b3150 0,#0b1220 42%);color:var(--text);font:15px/1.55 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+.wrap{max-width:1100px;margin:auto;padding:22px 16px 60px}.hero{padding:26px;border:1px solid var(--line);border-radius:22px;background:linear-gradient(135deg,#172942,#111b2b);box-shadow:0 18px 55px #0004}
+.kicker{color:var(--green);font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}.hero h1{font-size:clamp(27px,5vw,42px);line-height:1.12;margin:8px 0}.hero p{color:var(--muted);max-width:760px;margin:10px 0 0}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:20px}.stat{background:#0d1828;border:1px solid var(--line);padding:13px;border-radius:14px}.stat b{display:block;font-size:24px}.stat span{font-size:12px;color:var(--muted)}
+nav{display:flex;gap:8px;overflow:auto;padding:18px 0 12px;position:sticky;top:0;background:#0b1220ed;z-index:5}nav a{white-space:nowrap;color:var(--muted);text-decoration:none;padding:9px 13px;border:1px solid var(--line);border-radius:999px;font-size:13px}nav a:hover{color:var(--text);border-color:var(--green)}
+section{margin-top:18px}.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:19px;margin:14px 0}.section-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}.section-title h2{font-size:21px;margin:0}.sub{color:var(--muted);font-size:13px}.pill{font-size:11px;color:var(--green);border:1px solid #2f755e;border-radius:999px;padding:4px 9px;white-space:nowrap}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.progress{height:9px;background:#26364a;border-radius:99px;overflow:hidden}.progress i{display:block;height:100%;background:linear-gradient(90deg,#38b98b,#8be0b7);width:0%;transition:width .2s}
+.check{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid #26364a}.check:last-child{border:0}.check input{width:18px;height:18px;accent-color:#37c28f;margin-top:3px;flex-shrink:0}.check label{cursor:pointer;flex:1}.check small{display:block;color:var(--muted);font-size:12px}
+button,select,input[type=date],textarea{font:inherit;color:var(--text);background:#0c1727;border:1px solid var(--line);border-radius:10px;padding:9px 12px}
+button{cursor:pointer}button.primary{background:#1e765b;border-color:#299b75;color:white;font-weight:700}button:hover{filter:brightness(1.12)}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.dayselect{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.dayselect select{min-width:150px}.day-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:7px;margin-top:14px}.day{padding:10px 2px;text-align:center;border:1px solid var(--line);border-radius:10px;background:#0d1828;color:var(--muted);font-size:12px}.day.active{border-color:var(--blue);color:white;background:#1c3552}.day.done{border-color:#2e8a68;background:#14382f;color:#a9f2d3}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:10px;border-bottom:1px solid var(--line);vertical-align:top}th{color:var(--muted);font-weight:600}
+.note{border-left:3px solid var(--amber);padding:10px 13px;background:#2b261a66;border-radius:0 10px 10px 0;color:#e9d9b5;font-size:13px;margin-top:12px}
+textarea{width:100%;min-height:82px;resize:vertical}.muted{color:var(--muted)}.big{font-size:30px;font-weight:800}.tag{color:var(--blue);font-size:12px;font-weight:700}
+.todo-item{display:grid;grid-template-columns:1fr auto auto;gap:9px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}.todo-item:last-child{border-bottom:0}.todo-title{font-weight:700}.todo-meta{font-size:12px;color:var(--muted)}.status-btn{min-width:112px;font-size:12px;font-weight:700}.status-pending{border-color:#9b7938;color:#f5c56b;background:#302817}.status-done{border-color:#2e8a68;color:#a9f2d3;background:#14382f}.todo-done .todo-title{text-decoration:line-through;color:#9fb0c5}.empty-todo{padding:14px;border:1px dashed var(--line);border-radius:10px;color:var(--muted);font-size:13px}
+@media(max-width:520px){.todo-item{grid-template-columns:1fr auto}.todo-item .delete-todo{grid-column:2;grid-row:1}.todo-item .status-btn{grid-column:1;justify-self:start}}
+footer{color:var(--muted);text-align:center;font-size:12px;padding:26px 8px}
+@media(max-width:720px){.stats{grid-template-columns:repeat(2,1fr)}.grid2,.grid3{grid-template-columns:1fr}.day-grid{grid-template-columns:repeat(5,1fr)}.card{padding:15px}.wrap{padding:14px 12px 40px}}
+</style>
+
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0b1220">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+ <div class="kicker">30-Day Attention Training Plan</div>
+ <h1>Vivek's Focus Reset</h1>
+ <p>Phone-free meals • Focus practice • Urge surfing • Better study engagement. Goal mobile se nafrat karna nahi, apni attention par control wapas develop karna hai.</p>
+ <div class="stats">
+  <div class="stat"><b id="overall">0%</b><span>Selected day completion</span></div>
+  <div class="stat"><b id="streak">0</b><span>Days with activity</span></div>
+  <div class="stat"><b id="meals">0/3</b><span>Today's phone-free meals</span></div>
+  <div class="stat"><b id="focus">0</b><span>Focus rounds completed</span></div>
+ </div>
+</header>
+<nav>
+ <a href="#today">Today's Tracker</a><a href="#plan">30-Day Plan</a><a href="#study">Study Focus</a><a href="#urge">Boredom Protocol</a><a href="#review">Daily Review</a>
+</nav>
+
+<section id="today" class="card">
+ <div class="section-title"><h2>1. Today's Tracker</h2><span class="pill">Daily checklist</span></div>
+ <div class="dayselect">
+  <label for="date"><b>Date:</b></label><input type="date" id="date">
+  <span class="sub">Har date ka data isi device/browser mein save hoga.</span>
+ </div>
+ <div style="margin:14px 0 7px;display:flex;justify-content:space-between"><b>Daily completion</b><b id="pct">0%</b></div><div class="progress"><i id="bar"></i></div>
+ <div class="grid2">
+  <div>
+   <h3>Meals without phone</h3><p class="sub">Apne current week ke target ke hisaab se check karo. Gradually increase karo.</p>
+   <div id="mealChecks"></div>
+  </div>
+  <div>
+   <h3>Attention habits</h3><p class="sub">Perfect day zaroori nahi; repeatable practice zaroori hai.</p>
+   <div id="habitChecks"></div>
+  </div>
+ </div>
+ <div class="actions"><button class="primary" id="saveBtn">Save today's progress</button><button id="clearDay">Clear this date</button></div>
+ <p class="sub" id="saveMsg" aria-live="polite"></p>
+</section>
+
+<section id="plan" class="card">
+ <div class="section-title"><h2>2. 30-Day Gradual Plan</h2><span class="pill">No sudden detox</span></div>
+ <p class="sub">Day select karo. Har din ka target dekho; target miss ho toh guilt nahi—same level repeat kar sakte ho.</p>
+ <div class="dayselect"><label for="dayPick"><b>Choose day:</b></label><select id="dayPick"></select><span id="weekLabel" class="tag"></span></div>
+ <div class="day-grid" id="dayGrid"></div>
+ <div class="grid2" style="margin-top:18px">
+  <div class="card" style="margin:0;background:var(--panel2)">
+   <div class="tag">MEAL TARGET</div><div class="big" id="mealTarget">3 min</div><p id="mealDesc" class="sub"></p>
+  </div>
+  <div class="card" style="margin:0;background:var(--panel2)">
+   <div class="tag">FOCUS TARGET</div><div class="big" id="focusTarget">12 min</div><p id="focusDesc" class="sub"></p>
+  </div>
+ </div>
+ <div class="note">Agar kisi week ka target bahut difficult lage, usi level par kuch aur din raho. Progress ka matlab har haal mein calendar follow karna nahi.</div>
+</section>
+
+<section id="study" class="card">
+ <div class="section-title"><h2>3. Study Focus Session Tracker</h2><span class="pill">Active learning</span></div>
+ <p class="sub">Focus target ke according rounds complete karo. Break mein scrolling nahi—walk, water, stretch ya window se bahar dekho.</p>
+ <div class="grid3">
+  <div><label class="sub" for="subject">Subject / chapter</label><input id="subject" placeholder="e.g. Biology – Genetics" style="width:100%"></div>
+  <div><label class="sub" for="planned">Planned focus (min)</label><input id="planned" type="number" min="1" value="12" style="width:100%"></div>
+  <div><label class="sub" for="breakTime">Break (min)</label><input id="breakTime" type="number" min="1" value="3" style="width:100%"></div>
+ </div>
+ <div class="grid2" style="margin-top:14px">
+  <div>
+   <h3>Round checklist</h3>
+   <div id="roundChecks"></div>
+  </div>
+  <div>
+   <h3>Session quality</h3>
+   <div id="qualityChecks">
+    <div class="check"><input type="checkbox" id="q1"><label for="q1">Phone out of reach<small>Phone desk par nahi, ideally doosre room / bag mein.</small></label></div>
+    <div class="check"><input type="checkbox" id="q2"><label for="q2">Clear micro-goal set kiya<small>Example: 2 NCERT pages + 5 recall questions.</small></label></div>
+    <div class="check"><input type="checkbox" id="q3"><label for="q3">Break mein short-video scrolling nahi ki<small>Break ko actual recovery banaya.</small></label></div>
+   </div>
+  </div>
+ </div>
+ <div class="actions"><button class="primary" id="saveStudy">Save study session</button><button id="resetStudy">Reset round checks</button></div>
+ <p class="sub" id="studyMsg" aria-live="polite"></p>
+ <div class="card" style="margin-top:22px;background:var(--panel2)">
+  <div class="section-title"><h3 style="margin:0">Day-wise Study To-do List</h3><span class="pill">Day 1–30 · Separate tasks</span></div>
+  <p class="sub">Upar 30-Day Plan mein jis Day ko select karoge, usi din ki to-do list yahan dikhegi. Har day ki list alag save hogi.</p>
+  <div class="grid2">
+   <div><label class="sub" for="todoTitle">Task / chapter</label><input id="todoTitle" placeholder="e.g. Anatomy of Flowering Plants" style="width:100%"></div>
+   <div><label class="sub" for="todoTarget">Specific target</label><input id="todoTarget" placeholder="e.g. NCERT ke 5 pages read karne hain" style="width:100%"></div>
+   <div><label class="sub" for="todoMinutes">Time (minutes)</label><input id="todoMinutes" type="number" min="1" placeholder="e.g. 40" style="width:100%"></div>
+   <div><label class="sub" for="todoNote">Extra note (optional)</label><input id="todoNote" placeholder="e.g. diagrams + examples revise" style="width:100%"></div>
+  </div>
+  <div class="actions"><button class="primary" id="addTodo">+ Add task to selected day</button></div>
+  <div id="todoList" style="margin-top:14px"></div>
+  <p class="sub" id="todoMsg" aria-live="polite"></p>
+ </div>
+ <h3 style="margin-top:22px">Today's study log</h3><div id="studyLog" class="sub">Abhi koi session save nahi hua.</div>
+</section>
+
+<section id="urge" class="card">
+ <div class="section-title"><h2>4. Boredom / Mobile Urge Protocol</h2><span class="pill">2-minute pause</span></div>
+ <p>Jab padhte hue lage “bas ab mobile dekhna hai”, tab ye sequence follow karo:</p>
+ <div class="grid2">
+  <div>
+   <div class="check"><input type="checkbox" id="u1"><label for="u1"><b>1. Notice</b><small>“Boredom aa rahi hai; mobile check karne ki urge hai.”</small></label></div>
+   <div class="check"><input type="checkbox" id="u2"><label for="u2"><b>2. Pause for 2 minutes</b><small>Phone mat uthao. Urge ko observe karo; fight karna zaroori nahi.</small></label></div>
+   <div class="check"><input type="checkbox" id="u3"><label for="u3"><b>3. Make task smaller</b><small>3 lines read karo, ek diagram label karo, ya ek MCQ solve karo.</small></label></div>
+   <div class="check"><input type="checkbox" id="u4"><label for="u4"><b>4. Choose consciously</b><small>Engagement aaye toh continue; warna planned break lo.</small></label></div>
+  </div>
+  <div class="card" style="margin:0;background:var(--panel2)">
+   <h3>Urge log</h3>
+   <label class="sub" for="urgeIntensity">Urge kitni strong thi?</label>
+   <select id="urgeIntensity" style="width:100%;margin:5px 0 12px"><option>Low</option><option selected>Medium</option><option>High</option></select>
+   <label class="sub" for="urgeNote">Trigger / kya hua?</label>
+   <textarea id="urgeNote" placeholder="e.g. 15 min reading ke baad restless feel hua..."></textarea>
+   <button class="primary" id="saveUrge" style="margin-top:10px">Save urge practice</button>
+   <p class="sub" id="urgeMsg"></p>
+  </div>
+ </div>
+ <div class="note">Urge ko delay karna ek skill practice hai, medical treatment nahi. Boredom ko har baar forcefully endure karna zaroori nahi—sleep, stress, task difficulty aur breaks bhi check karo.</div>
+</section>
+
+<section id="review" class="card">
+ <div class="section-title"><h2>5. End-of-Day Review</h2><span class="pill">2-minute reflection</span></div>
+ <div class="grid2">
+  <div><label class="sub" for="win">Aaj kya achha hua?</label><textarea id="win" placeholder="Aaj maine..."></textarea></div>
+  <div><label class="sub" for="challenge">Sabse difficult moment?</label><textarea id="challenge" placeholder="Boredom / phone urge kab aayi?"></textarea></div>
+  <div><label class="sub" for="learn">Maine kya notice / learn kiya?</label><textarea id="learn" placeholder="Mera trigger kya tha? Kis cheez se help mili?"></textarea></div>
+  <div><label class="sub" for="tomorrow">Kal ka ek small improvement</label><textarea id="tomorrow" placeholder="Kal main sirf ek cheez improve karunga..."></textarea></div>
+ </div>
+ <div class="actions"><button class="primary" id="saveReview">Save daily review</button><button id="exportBtn">Export my data (JSON)</button><button id="printBtn">Print / Save as PDF</button></div>
+ <p class="sub" id="reviewMsg"></p>
+</section>
+
+<section class="card">
+ <div class="section-title"><h2>6. Weekly Progression Guide</h2><span class="pill">Flexible targets</span></div>
+ <table><thead><tr><th>Period</th><th>Phone-free meals</th><th>Focus practice</th><th>Rule</th></tr></thead><tbody>
+ <tr><td>Days 1–7</td><td>One meal: 3 → 10 min, then aim one full meal</td><td>12 min focus + 3 min break, 3 rounds</td><td>Start small; repeat if needed.</td></tr>
+ <tr><td>Days 8–14</td><td>One full meal phone-free</td><td>15 min focus + 3 min break, 3 rounds</td><td>Build consistency.</td></tr>
+ <tr><td>Days 15–21</td><td>Two meals phone-free</td><td>20 min focus + 4 min break, 3 rounds</td><td>Use active recall and MCQs.</td></tr>
+ <tr><td>Days 22–30</td><td>Gradually aim all three meals</td><td>25 min focus + 5 min break, 3 rounds</td><td>Then gradually build longer sessions.</td></tr>
+ </tbody></table>
+ <p class="sub">Note: Focus intervals are training targets, not a ceiling. If your current study capacity is already higher, don't reduce productive study time—use this as a short attention-control exercise alongside your normal schedule.</p>
+</section>
+<footer>Vivek's Focus Reset • Your progress is saved locally in this browser. It is not uploaded to a server.</footer>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const today=()=>new Date().toISOString().slice(0,10);
+$('date').value=today();
+const KEY='vivek_focus_reset_v1';
+const TODO_KEY='vivek_focus_reset_day_todos_v1';
+let dayTodos={};try{dayTodos=JSON.parse(localStorage.getItem(TODO_KEY)||'{}')}catch(e){dayTodos={}}
+const saveTodos=()=>localStorage.setItem(TODO_KEY,JSON.stringify(dayTodos));
+const selectedPlanDay=()=>String(+$('dayPick').value||1);
+const tasksForDay=()=>dayTodos[selectedPlanDay()]||(dayTodos[selectedPlanDay()]=[]);
+let db={};
+try{db=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){db={}}
+const dateKey=()=> $('date').value || today();
+const blank=()=>({meals:[false,false,false],habits:[false,false,false,false,false],rounds:[false,false],quality:[false,false,false],urge:[false,false,false,false],sessions:[],review:{},urgeLogs:[]});
+function data(){return db[dateKey()]||(db[dateKey()]=blank())}
+function persist(){localStorage.setItem(KEY,JSON.stringify(db))}
+const mealLabels=['Breakfast','Lunch','Dinner'];
+const mealDetails=['Phone ko table se door rakho.','Meal ke dauran scrolling / video nahi.','Meal ke dauran scrolling / video nahi.'];
+const habitLabels=['Aaj planned study blocks kiye','Break mein scrolling avoid ki','Urge aane par 2-minute pause practice ki','Unnecessary notifications / checking se bacha','Sleep routine ko priority di'];
+function makeChecks(container,items,arr,kind){$(container).innerHTML='';items.forEach((it,i)=>{let d=document.createElement('div');d.className='check';let c=document.createElement('input');c.type='checkbox';c.checked=!!arr[i];c.addEventListener('change',()=>{data()[kind][i]=c.checked;persist();refresh()});let l=document.createElement('label');l.textContent=it;l.append(document.createElement('small'));l.lastChild.textContent=kind==='meals'?mealDetails[i]:'';d.append(c,l);$(container).append(d)})}
+function renderTodos(){
+ const list=$('todoList'),items=tasksForDay();list.innerHTML='';
+ if(!items.length){list.innerHTML='<div class="empty-todo">Is day ke liye abhi koi task nahi hai. Upar se apna pehla task add karo.</div>';return}
+ items.forEach((task,index)=>{
+  const row=document.createElement('div');row.className='todo-item'+(task.done?' todo-done':'');
+  const info=document.createElement('div');const title=document.createElement('div');title.className='todo-title';title.textContent=task.title;
+  const meta=document.createElement('div');meta.className='todo-meta';meta.textContent=[task.target,task.minutes?task.minutes+' min':'',task.note].filter(Boolean).join(' · ');
+  info.append(title,meta);
+  const status=document.createElement('button');status.className='status-btn '+(task.done?'status-done':'status-pending');status.textContent=task.done?'✓ Complete':'○ Pending';status.setAttribute('aria-label',task.done?'Mark task pending':'Mark task complete');
+  status.onclick=()=>{task.done=!task.done;saveTodos();renderTodos()};
+  const del=document.createElement('button');del.className='delete-todo';del.textContent='Delete';del.onclick=()=>{if(confirm('Is task ko Day '+selectedPlanDay()+' ki list se delete karna hai?')){tasksForDay().splice(index,1);saveTodos();renderTodos()}};
+  row.append(info,status,del);list.append(row);
+ });
+}
+function refresh(){
+ let d=data();renderTodos();makeChecks('mealChecks',mealLabels,d.meals,'meals');makeChecks('habitChecks',habitLabels,d.habits,'habits');
+ let total=d.meals.length+d.habits.length,done=d.meals.filter(Boolean).length+d.habits.filter(Boolean).length,p=Math.round(done/total*100);
+ $('overall').textContent=p+'%';$('pct').textContent=p+'%';$('bar').style.width=p+'%';$('meals').textContent=d.meals.filter(Boolean).length+'/3';$('focus').textContent=d.sessions.reduce((a,s)=>a+s.rounds,0);
+ $('streak').textContent=Object.values(db).filter(x=>(x.meals||[]).some(Boolean)||(x.habits||[]).some(Boolean)||(x.sessions||[]).length).length;
+ $('q1').checked=d.quality[0];$('q2').checked=d.quality[1];$('q3').checked=d.quality[2];
+ ['q1','q2','q3'].forEach((id,i)=>$(id).onchange=()=>{data().quality[i]=$(id).checked;persist()});
+ ['u1','u2','u3','u4'].forEach((id,i)=>$(id).checked=d.urge[i]);
+ $('roundChecks').innerHTML='';for(let i=0;i<3;i++){let row=document.createElement('div');row.className='check';let c=document.createElement('input');c.type='checkbox';c.checked=!!d.rounds[i];c.onchange=()=>{data().rounds[i]=c.checked;persist()};let l=document.createElement('label');l.textContent='Round '+(i+1);l.append(document.createElement('small'));l.lastChild.textContent='Focus: '+$('planned').value+' min';row.append(c,l);$('roundChecks').append(row)}
+ $('studyLog').innerHTML=d.sessions.length?d.sessions.map((s,i)=>`<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)"><div><b>${esc(s.subject||'Study session')}</b> — ${s.rounds}/3 rounds (${s.minutes} min planned each)<div class="muted" style="font-size:11px">Break: ${Number(s.break)||0} min</div></div><button type="button" data-delete-session="${i}" aria-label="Delete study session">Delete</button></div>`).join(''):'Abhi koi session save nahi hua.';
+ $('studyLog').querySelectorAll('[data-delete-session]').forEach(btn=>btn.addEventListener('click',()=>{const i=Number(btn.dataset.deleteSession);if(!Number.isInteger(i)||i<0||i>=data().sessions.length)return;if(confirm('Is study session ko delete karna hai?')){data().sessions.splice(i,1);persist();refresh();$('studyMsg').textContent='Study session deleted.'}}));
+ const r=d.review||{};['win','challenge','learn','tomorrow'].forEach(k=>$(k).value=r[k]||'');
+}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+const dayPick=$('dayPick');for(let i=1;i<=30;i++){let o=document.createElement('option');o.value=i;o.textContent='Day '+i;dayPick.append(o)}
+function plan(day){
+ let meal,md,focus,fd,week;
+ if(day<=7){let mins=day<=2?3:day<=4?5:day<=6?8:10;meal=mins+' min';md=day===7?'Aim for one complete meal without phone.':'One selected meal: '+mins+' minutes phone-free.';focus='12 min';fd='3 focus rounds, each followed by a 3-minute screen-free break.';week='Week 1 · Foundation'}
+ else if(day<=14){meal='1 full meal';md='Ek poora meal bina phone ke. Comfortable ho toh baaki meals mein bhi small steps.';focus='15 min';fd='3 rounds × 15 min focus; 3 min screen-free break.';week='Week 2 · Consistency'}
+ else if(day<=21){meal='2 full meals';md='Do meals phone-free. Agar difficult ho toh ek full meal + doosre mein partial time.';focus='20 min';fd='3 rounds × 20 min focus; 4 min screen-free break.';week='Week 3 · Expansion'}
+ else{meal='Up to 3 meals';md='Teeno meals ka gradual target. Zarurat ho toh 2 meals par hi consolidate karo.';focus='25 min';fd='3 rounds × 25 min focus; 5 min screen-free break.';week='Week 4 · Stabilisation'}
+ $('mealTarget').textContent=meal;$('mealDesc').textContent=md;$('focusTarget').textContent=focus;$('focusDesc').textContent=fd;$('weekLabel').textContent=week;
+}
+function renderDays(){let cur=+dayPick.value;$('dayGrid').innerHTML='';for(let i=1;i<=30;i++){let b=document.createElement('button');b.className='day'+(i===cur?' active':'');b.textContent=i;b.onclick=()=>{dayPick.value=i;plan(i);renderDays()};$('dayGrid').append(b)}}
+dayPick.value=1;dayPick.onchange=()=>{plan(+dayPick.value);renderDays();renderTodos()};plan(1);renderDays();renderTodos();
+$('addTodo').onclick=()=>{const title=$('todoTitle').value.trim();if(!title){$('todoMsg').textContent='Pehle task / chapter ka naam likho.';return}tasksForDay().push({title,target:$('todoTarget').value.trim(),minutes:+$('todoMinutes').value||0,note:$('todoNote').value.trim(),done:false});saveTodos();$('todoTitle').value='';$('todoTarget').value='';$('todoMinutes').value='';$('todoNote').value='';renderTodos();$('todoMsg').textContent='Task Day '+selectedPlanDay()+' ki list mein add ho gaya.'};
+$('saveBtn').onclick=()=>{persist();$('saveMsg').textContent='Progress saved on this device.';refresh()};
+$('clearDay').onclick=()=>{if(confirm('Is date ka tracker data clear karna hai?')){db[dateKey()]=blank();persist();refresh();$('saveMsg').textContent='Date cleared.'}};
+$('date').onchange=refresh;
+$('saveStudy').onclick=()=>{let d=data(),rounds=d.rounds.filter(Boolean).length;d.quality=[$('q1').checked,$('q2').checked,$('q3').checked];d.sessions.push({subject:$('subject').value,minutes:+$('planned').value||0,rounds,break:+$('breakTime').value||0});d.rounds=[false,false,false];persist();refresh();$('studyMsg').textContent='Study session saved.'};
+$('resetStudy').onclick=()=>{data().rounds=[false,false,false];persist();refresh();$('studyMsg').textContent='Round checks reset.'};
+$('saveUrge').onclick=()=>{let d=data();d.urge=[$('u1').checked,$('u2').checked,$('u3').checked,$('u4').checked];d.urgeLogs.push({intensity:$('urgeIntensity').value,note:$('urgeNote').value});persist();$('urgeMsg').textContent='Urge practice saved.'};
+$('saveReview').onclick=()=>{data().review={win:$('win').value,challenge:$('challenge').value,learn:$('learn').value,tomorrow:$('tomorrow').value};persist();$('reviewMsg').textContent='Daily review saved.'};
+$('exportBtn').onclick=()=>{persist();let blob=new Blob([JSON.stringify({dailyTracker:db,dayWiseTodos:dayTodos},null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='vivek-focus-reset-data.json';a.click();URL.revokeObjectURL(a.href)};
+$('printBtn').onclick=()=>window.print();
+refresh();
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
+}
+</script>
+</body></html>
