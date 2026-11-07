@@ -57,7 +57,7 @@ footer{color:var(--muted);text-align:center;font-size:12px;padding:26px 8px}
  <div class="section-title"><h2>1. Today's Tracker</h2><span class="pill">Daily checklist</span></div>
  <div class="dayselect">
   <label for="date"><b>Date:</b></label><input type="date" id="date">
-  <span class="sub">Har date ka data isi device/browser mein save hoga.</span>
+  <span class="sub">App storage: <b id="storageStatus">Setting up secure local storage…</b></span>
  </div>
  <div style="margin:14px 0 7px;display:flex;justify-content:space-between"><b>Daily completion</b><b id="pct">0%</b></div><div class="progress"><i id="bar"></i></div>
  <div class="grid2">
@@ -177,7 +177,102 @@ footer{color:var(--muted);text-align:center;font-size:12px;padding:26px 8px}
 </section>
 <footer>Vivek's Focus Reset • Your progress is saved locally in this browser. It is not uploaded to a server.</footer>
 </div>
+
 <script>
+/* Vivek Focus Reset: IndexedDB-backed app storage */
+(function () {
+  const DB_NAME = 'vivek_focus_reset_storage';
+  const STORE = 'app_data';
+  const KEYS = ['vivek_focus_reset_v1', 'vivek_focus_reset_day_todos_v1'];
+
+  function openDB() {
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open(DB_NAME, 1);
+      request.onupgradeneeded = () => {
+        const db = request.result;
+        if (!db.objectStoreNames.contains(STORE)) db.createObjectStore(STORE);
+      };
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  function readAll(db) {
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE, 'readonly');
+      const store = tx.objectStore(STORE);
+      const values = {};
+      let remaining = KEYS.length;
+      if (!remaining) return resolve(values);
+      KEYS.forEach(key => {
+        const req = store.get(key);
+        req.onsuccess = () => {
+          values[key] = req.result;
+          if (--remaining === 0) resolve(values);
+        };
+        req.onerror = () => reject(req.error);
+      });
+      tx.onerror = () => reject(tx.error);
+    });
+  }
+
+  function write(db, key, value) {
+    try {
+      const tx = db.transaction(STORE, 'readwrite');
+      tx.objectStore(STORE).put(value, key);
+    } catch (e) {
+      console.warn('IndexedDB write failed:', e);
+    }
+  }
+
+  window.__focusStorageReady = (async () => {
+    try {
+      const db = await openDB();
+      const saved = await readAll(db);
+
+      // Restore the IndexedDB copy first. If this is the first launch after
+      // upgrade, migrate the existing localStorage data into IndexedDB.
+      KEYS.forEach(key => {
+        if (saved[key] !== undefined) {
+          localStorage.setItem(key, saved[key]);
+        } else {
+          const legacy = localStorage.getItem(key);
+          if (legacy !== null) write(db, key, legacy);
+        }
+      });
+
+      const nativeSetItem = Storage.prototype.setItem;
+      Storage.prototype.setItem = function (key, value) {
+        nativeSetItem.call(this, key, value);
+        if (this === window.localStorage && KEYS.includes(String(key))) {
+          write(db, String(key), String(value));
+        }
+      };
+
+      // Ask the browser not to evict this origin's storage automatically.
+      let persistent = false;
+      try {
+        if (navigator.storage && navigator.storage.persist) {
+          persistent = await navigator.storage.persist();
+        }
+      } catch (_) {}
+
+      window.__focusStorageMode = persistent
+        ? 'IndexedDB · persistent storage enabled'
+        : 'IndexedDB · saved on this device';
+      return true;
+    } catch (error) {
+      console.error('IndexedDB unavailable; using browser local storage:', error);
+      window.__focusStorageMode = 'Browser storage fallback';
+      return false;
+    }
+  })();
+})();
+</script>
+
+<script>
+(async function(){
+await window.__focusStorageReady;
 const $=id=>document.getElementById(id);
 const today=()=>new Date().toISOString().slice(0,10);
 $('date').value=today();
@@ -247,6 +342,9 @@ $('saveReview').onclick=()=>{data().review={win:$('win').value,challenge:$('chal
 $('exportBtn').onclick=()=>{persist();let blob=new Blob([JSON.stringify({dailyTracker:db,dayWiseTodos:dayTodos},null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='vivek-focus-reset-data.json';a.click();URL.revokeObjectURL(a.href)};
 $('printBtn').onclick=()=>window.print();
 refresh();
+const storageLabel = $('storageStatus');
+if (storageLabel) storageLabel.textContent = window.__focusStorageMode || 'Browser storage';
+})();
 </script>
 
 <script>
